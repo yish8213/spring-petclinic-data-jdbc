@@ -1,25 +1,33 @@
-# Spring PetClinic Sample Application built with Spring Data JDBC
-![Build Maven](https://github.com/spring-petclinic/spring-petclinic-data-jdbc/workflows/Build%20Maven/badge.svg)
+# Spring PetClinic + Gradle + K8s
 
-This is a branch of the official [Spring PetClinic](https://github.com/spring-projects/spring-petclinic) application with domain & persistence layer built with [Spring Data JDBC](https://projects.spring.io/spring-data-jdbc/) instead of [Spring Data JPA](https://projects.spring.io/spring-data-jpa/).
+디렉토리 및 파일 설명
 
-Additionally:
+/manifests : K8s 레시피 - MySQL, PetClinic, Nginx-ingress  
+build.sh : 빌드 스크립트(check-env.sh 스크립트 실행을 위해 mysqladmin이 필요하다)  
+deploy.sh : 도커이미지 디플로이
 
-- uses [TestContainers](http://testcontainers.org/) to spin up MySQL during integtation tests
-- uses [Wavefront](https://www.wavefront.com/) for monitoring
+# 배포 방법
 
-Check original project [readme](https://github.com/spring-projects/spring-petclinic/blob/master/readme.md) for introduction the project, how to run, and how to contribute.
+MySQL -> PetClinic -> Nginx-ingress 순서로 배포를 진행한다.
 
-## Understanding the Spring Petclinic application with a few diagrams
+`kubectl apply -f mysql-0-pv.yaml`  
+`kubectl apply -f mysql-1-deployment.yaml`
 
-[See the presentation here](http://fr.slideshare.net/AntoineRey/spring-framework-petclinic-sample-application)
+배포후 mysql 팟이 생성되면 계정 ACL 설정과 스키마 생성을 진행한다.
 
-## Interesting Spring Petclinic forks
+`kubectl exec -it <mysql_podname> -- /bin/bash`  
+`mysql -uroot -p`
 
-The Spring Petclinic master branch in the main [spring-projects](https://github.com/spring-projects/spring-petclinic)
-GitHub org is the "canonical" implementation, currently based on Spring Boot and Thymeleaf.
+패스워드는 프로퍼티 파일을 참고..
 
-This [spring-petclinic-data-jdbc](https://github.com/spring-petclinic/spring-petclinic-data-jdbc) project is one of the [several forks](https://spring-petclinic.github.io/docs/forks.html) 
-hosted in a special GitHub org: [spring-petclinic](https://github.com/spring-petclinic).
-If you have a special interest in a different technology stack
-that could be used to implement the Pet Clinic then please join the community there.
+`CREATE DATABASE petclinic;`  
+`GRANT ALL PRIVILEGES ON *.* TO 'root'@'10.42.0.%' IDENTIFIED BY 'petclinic' WITH GRANT OPTION;`  
+IP 대역은 K8s 클러스터 IP범위를 참고하여 설정한다.  
+`FLUSH PRIVILEGES;`
+
+`kubectl apply -f petclinic-0-deployment.yaml`  
+wro4j 플러그인을 Gradle에 설정하는 대신 static/resources에 petclinic.css 파일로 대체 하였다.
+
+`kubectl apply -f nginx-ingress-0-deployment.yaml`  
+싱글 노드라면 해당 노드의 IP에 80포트로 PetClinic에 접근 가능하다.
+
