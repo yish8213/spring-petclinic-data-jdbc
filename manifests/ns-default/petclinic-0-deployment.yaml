@@ -65,3 +65,11 @@ spec:
               value: "petclinic"
             - name: SPRING_PROFILES_ACTIVE
               value: "dev"
+            - name: LOGGING_FILE_PATH
+              value: "/logs"
+          volumeMounts:
+            - name: logs
+              mountPath: /logs
+      volumes:
+        - name: logs
+          emptyDir: {}
