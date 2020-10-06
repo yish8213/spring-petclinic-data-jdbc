@@ -1,4 +1,4 @@
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: petclinic-ingress
@@ -10,7 +10,5 @@ spec:
         paths:
           - path: /
             backend:
-              service:
-                name: petclinic-svc
-                port:
-                  number: 80
+              serviceName: petclinic-svc
+              servicePort: 80
