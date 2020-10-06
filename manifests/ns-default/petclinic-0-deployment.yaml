@@ -58,11 +58,11 @@ spec:
             initialDelaySeconds: 60
             timeoutSeconds: 15
           env:
-            - name: DATABASE_HOSTNAME
-              value: "mysql"
-            - name: DATABASE_USERNAME
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql/petclinic"
+            - name: SPRING_DATASOURCE_USERNAME
               value: "root"
-            - name: DATABASE_PASSWORD
+            - name: SPRING_DATASOURCE_PASSWORD
               value: "petclinic"
             - name: SPRING_PROFILES_ACTIVE
               value: "dev"
