@@ -72,4 +72,6 @@ spec:
               mountPath: /logs
       volumes:
         - name: logs
-          emptyDir: {}
+          hostPath:
+            path: /logs
+            type: Directory
