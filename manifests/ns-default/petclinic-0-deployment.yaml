@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
         - name: petclinic
-          image: docker.io/library/petclinic-test:latest
+          image: docker.io/y1sh/petclinic-test:latest
           imagePullPolicy: IfNotPresent
           resources:
             requests:
